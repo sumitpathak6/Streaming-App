@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitch_clone/providers/user_provider.dart';
+import 'package:twitch_clone/util/colors.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -11,12 +12,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _page = 0;
+
+  onPageChange(int page) {
+    setState(() {
+      _page = page;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
-      body: Center(
-        child: Text(userProvider.user.username),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: buttonColor,
+        unselectedItemColor: primaryColor,
+        backgroundColor: backgroundColor,
+        unselectedFontSize: 12,
+        onTap: onPageChange,
+        currentIndex: _page,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: 'Followings'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_rounded), label: 'Go LIVE'),
+          BottomNavigationBarItem(icon: Icon(Icons.copy), label: 'Browse')
+        ],
       ),
     );
   }
