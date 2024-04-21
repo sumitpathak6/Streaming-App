@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:twitch_clone/resources/firestore_methods.dart';
+import 'package:twitch_clone/screens/broadcast_screen.dart';
 import 'package:twitch_clone/util/colors.dart';
 import 'package:twitch_clone/util/utils.dart';
 import 'package:twitch_clone/widgets/custom_button.dart';
@@ -23,6 +25,19 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
   void dispose() {
     _titleController.dispose();
     super.dispose();
+  }
+
+  goLiveStream() async {
+    String channelId = await FireStoreMethods()
+        .startLiveStream(context, _titleController.text, image);
+    if (channelId.isNotEmpty) {
+      showSnackBar(context, 'LiveStream has started successfully');
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: ((context) => const BroadcastScreen()),
+        ),
+      );
+    }
   }
 
   @override
@@ -105,7 +120,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: CustomButton(onTap: () {}, text: 'Go Live!'),
+              child: CustomButton(onTap: goLiveStream, text: 'Go Live!'),
             )
           ],
         ),
