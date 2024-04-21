@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     bool res = await _authMethods.signUpUser(context, _emailController.text, _usernameController.text, _passwordController.text);
     if(res){
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, HomeScreen.routeName);
+      Navigator.pushReplacementNamed(context, HomeScreen.routeName);
     }
   }
 
