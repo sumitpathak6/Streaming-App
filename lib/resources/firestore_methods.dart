@@ -17,11 +17,11 @@ class FireStoreMethods {
     String channelId = '';
     try {
       if (title.isNotEmpty && image != null) {
-        if (!(await _firestore
+        if (!((await _firestore
                 .collection('livestream')
-                .doc(user.user.uid)
+                .doc('${user.user.uid}${user.user.username}')
                 .get())
-            .exists) {
+            .exists)) {
           String thumbnailUrl = await _storageMethods.uploadImageToStorage(
             'livestream-thumbnails',
             image,
