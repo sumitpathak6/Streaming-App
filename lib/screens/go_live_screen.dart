@@ -34,7 +34,10 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
       showSnackBar(context, 'LiveStream has started successfully');
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: ((context) => const BroadcastScreen()),
+          builder: ((context) => BroadcastScreen(
+                isBroadcaster: true,
+                channelId: channelId,
+              )),
         ),
       );
     }
