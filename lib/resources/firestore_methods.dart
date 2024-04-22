@@ -6,6 +6,7 @@ import 'package:twitch_clone/model/livestream.dart';
 import 'package:twitch_clone/providers/user_provider.dart';
 import 'package:twitch_clone/resources/storage_methods.dart';
 import 'package:twitch_clone/util/utils.dart';
+import 'package:uuid/uuid.dart';
 
 class FireStoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -74,6 +75,27 @@ class FireStoreMethods {
       await _firestore.collection('livestream').doc(channelId).delete();
     } catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  Future<void> chat(String text, String id, BuildContext context) async {
+    final user = Provider.of<UserProvider>(context, listen: false);
+    try {
+      String commentId = const Uuid().v1();
+      await _firestore
+          .collection('livestream')
+          .doc(id)
+          .collection('comments')
+          .doc(commentId)
+          .set({
+        'username': user.user.username,
+        'message': text,
+        'uid': user.user.uid,
+        'createdAt': DateTime.now(),
+        'commentId': commentId
+      });
+    } on FirebaseException catch (e) {
+      showSnackBar(context, e.message!);
     }
   }
 
