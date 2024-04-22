@@ -23,6 +23,7 @@ class BroadcastScreen extends StatefulWidget {
 class _BroadcastScreenState extends State<BroadcastScreen> {
   late final RtcEngine _engine;
   List<int> remoteUid = [];
+  bool switchCamera = true;
   @override
   void initState() {
     _initEngine();
@@ -31,14 +32,10 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
 
   void _initEngine() async {
     _engine = await RtcEngine.createWithContext(RtcEngineContext(appId));
-    // _engine = createAgoraRtcEngine();
-    // await _engine.initialize(RtcEngineContext(appId: appId));
     _addListeners();
     await _engine.enableVideo();
     await _engine.startPreview();
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
-    // await _engine
-    //     .setChannelProfile(ChannelProfileType.channelProfileLiveBroadcasting);
     if (widget.isBroadcaster) {
       _engine.setClientRole(ClientRole.Broadcaster);
     } else {
@@ -77,6 +74,16 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
         Provider.of<UserProvider>(context, listen: false).user.uid);
   }
 
+  void _switchCamera() {
+    _engine.switchCamera().then((value) {
+      setState(() {
+        switchCamera = !switchCamera;
+      });
+    }).catchError((err){
+      debugPrint('switchCamera $err');
+    });
+  } 
+
   _leaveChannel() async {
     await _engine.leaveChannel();
     if ('${Provider.of<UserProvider>(context, listen: false).user.uid}${Provider.of<UserProvider>(context, listen: false).user.username}' ==
@@ -102,6 +109,17 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
           child: Column(
             children: [
               _renderVideo(user),
+              if("${user.uid}${user.username}" == widget.channelId)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: _switchCamera,
+                      child: const Text('Switch the Camer'),
+                    )
+                  ],
+                )
             ],
           ),
         ),
