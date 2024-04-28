@@ -51,7 +51,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
     _joinChannel();
   }
 
-  String baseUrl = "https://go-server-twitch.onrender.com/";
+  String baseUrl = "https://go-server-twitch.onrender.com";
 
   String? token;
 
@@ -89,12 +89,10 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
       setState(() {
         remoteUid.clear();
       });
-    },
-    tokenPrivilegeWillExpire: (token) async{
+    }, tokenPrivilegeWillExpire: (token) async {
       await getToken();
       await _engine.renewToken(token);
-    }
-    ));
+    }));
   }
 
   void _joinChannel() async {
@@ -102,7 +100,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
     if (defaultTargetPlatform == TargetPlatform.android) {
       await [Permission.microphone, Permission.camera].request();
     }
-    await _engine.joinChannelWithUserAccount(token, "testing123",
+    await _engine.joinChannelWithUserAccount(token, widget.channelId,
         Provider.of<UserProvider>(context, listen: false).user.uid);
   }
 
