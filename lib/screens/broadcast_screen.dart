@@ -12,6 +12,7 @@ import 'package:twitch_clone/providers/user_provider.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:twitch_clone/resources/firestore_methods.dart';
+import 'package:twitch_clone/responsive/responsive_layout.dart';
 import 'package:twitch_clone/screens/home_screen.dart';
 import 'package:twitch_clone/widgets/chat.dart';
 import 'package:http/http.dart' as http;
@@ -143,30 +144,64 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              _renderVideo(user),
-              if ("${user.uid}${user.username}" == widget.channelId)
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: _switchCamera,
-                      child: const Text('Switch Camera'),
-                    ),
-                    InkWell(
-                      onTap: onToggleMute,
-                      child: Text(isMuted ? 'Unmute' : 'Mute'),
-                    ),
-                  ],
+          child: ResponsiveLayout(
+            dekstopBody: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      _renderVideo(user),
+                      if ("${user.uid}${user.username}" == widget.channelId)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: _switchCamera,
+                              child: const Text('Switch Camera'),
+                            ),
+                            InkWell(
+                              onTap: onToggleMute,
+                              child: Text(isMuted ? 'Unmute' : 'Mute'),
+                            ),
+                            InkWell(
+                              onTap: onToggleMute,
+                              child: Text('ScreenShare'),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
-              Expanded(
-                child: Chat(
-                  channelId: widget.channelId,
-                ),
-              )
-            ],
+
+                Chat(channelId: widget.channelId)
+              ],
+            ),
+            mobileBody: Column(
+              children: [
+                _renderVideo(user),
+                if ("${user.uid}${user.username}" == widget.channelId)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: _switchCamera,
+                        child: const Text('Switch Camera'),
+                      ),
+                      InkWell(
+                        onTap: onToggleMute,
+                        child: Text(isMuted ? 'Unmute' : 'Mute'),
+                      ),
+                    ],
+                  ),
+                Expanded(
+                  child: Chat(
+                    channelId: widget.channelId,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
