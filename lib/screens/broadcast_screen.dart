@@ -57,15 +57,15 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
 
   Future<void> getToken() async {
     final res = await http.get(
-      Uri.parse("$baseUrl/rtc/${widget.channelId}/publisher/userAccount/${Provider.of<UserProvider>(context, listen: false).user.uid}/"),
+      Uri.parse(
+          "$baseUrl/rtc/${widget.channelId}/publisher/userAccount/${Provider.of<UserProvider>(context, listen: false).user.uid}/"),
     );
-    if(res.statusCode == 200){
+    if (res.statusCode == 200) {
       setState(() {
         token = res.body;
         token = jsonDecode(token!)['rtcToken'];
       });
-    }
-    else{
+    } else {
       debugPrint('Failed to fetch the token');
     }
   }
@@ -89,7 +89,12 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
       setState(() {
         remoteUid.clear();
       });
-    }));
+    },
+    tokenPrivilegeWillExpire: (token) async{
+      await getToken();
+      await _engine.renewToken(token);
+    }
+    ));
   }
 
   void _joinChannel() async {
