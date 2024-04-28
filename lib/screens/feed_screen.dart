@@ -42,7 +42,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       itemCount: snapshot.data.docs.length,
                       itemBuilder: ((context, index) {
                         LiveStream post =
-                            LiveStream.fromMap(snapshot.data.docs[index].data);
+                            LiveStream.fromMap(snapshot.data.docs[index].data());
                         return InkWell(
                           onTap: () async {
                             await FireStoreMethods()
