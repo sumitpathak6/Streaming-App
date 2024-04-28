@@ -1,3 +1,7 @@
+// ignore_for_file: library_prefixes
+
+import 'dart:convert';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,7 @@ import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:twitch_clone/resources/firestore_methods.dart';
 import 'package:twitch_clone/screens/home_screen.dart';
 import 'package:twitch_clone/widgets/chat.dart';
+import 'package:http/http.dart' as http;
 
 class BroadcastScreen extends StatefulWidget {
   final bool isBroadcaster;
@@ -46,6 +51,25 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
     _joinChannel();
   }
 
+  String baseUrl = "https://go-server-twitch.onrender.com/";
+
+  String? token;
+
+  Future<void> getToken() async {
+    final res = await http.get(
+      Uri.parse("$baseUrl/rtc/${widget.channelId}/publisher/userAccount/${Provider.of<UserProvider>(context, listen: false).user.uid}/"),
+    );
+    if(res.statusCode == 200){
+      setState(() {
+        token = res.body;
+        token = jsonDecode(token!)['rtcToken'];
+      });
+    }
+    else{
+      debugPrint('Failed to fetch the token');
+    }
+  }
+
   void _addListeners() {
     _engine.setEventHandler(
         RtcEngineEventHandler(joinChannelSuccess: (channel, uid, elapsed) {
@@ -69,10 +93,11 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
   }
 
   void _joinChannel() async {
+    await getToken();
     if (defaultTargetPlatform == TargetPlatform.android) {
       await [Permission.microphone, Permission.camera].request();
     }
-    await _engine.joinChannelWithUserAccount(tempToken, "testing123",
+    await _engine.joinChannelWithUserAccount(token, "testing123",
         Provider.of<UserProvider>(context, listen: false).user.uid);
   }
 
@@ -125,11 +150,11 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                   children: [
                     InkWell(
                       onTap: _switchCamera,
-                      child: const Text('Switch the Camera'),
+                      child: const Text('Switch Camera'),
                     ),
                     InkWell(
                       onTap: onToggleMute,
-                      child: Text(isMuted ? 'UnMute' : 'Mute'),
+                      child: Text(isMuted ? 'Unmute' : 'Mute'),
                     ),
                   ],
                 ),

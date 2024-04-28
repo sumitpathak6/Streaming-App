@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitch_clone/providers/user_provider.dart';
@@ -7,6 +6,7 @@ import 'package:twitch_clone/resources/firestore_methods.dart';
 import 'package:twitch_clone/widgets/custom_textfield.dart';
 import 'package:twitch_clone/widgets/loading_indicator.dart';
 
+// ignore: must_be_immutable
 class Chat extends StatefulWidget {
   String channelId;
   Chat({super.key, required this.channelId});
