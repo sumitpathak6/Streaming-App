@@ -16,6 +16,7 @@ import 'package:twitch_clone/responsive/responsive_layout.dart';
 import 'package:twitch_clone/screens/home_screen.dart';
 import 'package:twitch_clone/widgets/chat.dart';
 import 'package:http/http.dart' as http;
+import 'package:twitch_clone/widgets/custom_button.dart';
 
 class BroadcastScreen extends StatefulWidget {
   final bool isBroadcaster;
@@ -142,6 +143,12 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
         return Future.value(true);
       },
       child: Scaffold(
+        bottomNavigationBar: widget.isBroadcaster
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: CustomButton(onTap: _leaveChannel, text: 'End Stream'),
+              )
+            : null,
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ResponsiveLayout(
@@ -173,7 +180,6 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
                     ],
                   ),
                 ),
-
                 Chat(channelId: widget.channelId)
               ],
             ),
